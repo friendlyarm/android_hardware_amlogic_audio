@@ -14,7 +14,7 @@
 
 ifeq ($(strip $(BOARD_ALSA_AUDIO)),tiny)
 
-	LOCAL_PATH := $(call my-dir)
+LOCAL_PATH := $(call my-dir)
 
 # The default audio HAL module, which is a stub, that is loaded if no other
 # device specific modules are present. The exact load order can be seen in
@@ -22,57 +22,65 @@ ifeq ($(strip $(BOARD_ALSA_AUDIO)),tiny)
 #
 # The format of the name is audio.<type>.<hardware/etc>.so where the only
 # required type is 'primary'. Other possibilites are 'a2dp', 'usb', etc.
-	include $(CLEAR_VARS)
+include $(CLEAR_VARS)
 
-	LOCAL_MODULE := audio.primary.amlogic
-	LOCAL_MODULE_RELATIVE_PATH := hw
-	LOCAL_SRC_FILES := \
-		audio_hw.c
-	LOCAL_C_INCLUDES += \
-		external/tinyalsa/include \
-		system/media/audio_utils/include \
-		system/media/audio_effects/include \
-		system/media/audio_route/include
-	LOCAL_SHARED_LIBRARIES := \
-		liblog libcutils libtinyalsa \
-		libaudioutils libdl libaudioroute libutils
-	LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE := audio.primary.$(TARGET_DEVICE)
+LOCAL_MODULE_RELATIVE_PATH := hw
+LOCAL_SRC_FILES := \
+    audio_hw.c
 
-	include $(BUILD_SHARED_LIBRARY)
+LOCAL_C_INCLUDES += \
+    external/tinyalsa/include \
+    system/media/audio_utils/include \
+    system/media/audio_effects/include \
+    system/media/audio_route/include
+
+LOCAL_SHARED_LIBRARIES := \
+    liblog libcutils libtinyalsa \
+    libaudioutils libdl libaudioroute libutils
+
+LOCAL_MODULE_TAGS := optional
+
+include $(BUILD_SHARED_LIBRARY)
+
 #build for USB audio
 #BOARD_USE_USB_AUDIO := 1
-	ifeq ($(strip $(BOARD_USE_USB_AUDIO)),true)
-		include $(CLEAR_VARS)
-		
-		LOCAL_MODULE := audio.usb.amlogic
-		LOCAL_MODULE_RELATIVE_PATH := hw
-		LOCAL_SRC_FILES := \
-			usb_audio_hw.c \
-			audio_resampler.c
-		LOCAL_C_INCLUDES += \
-			external/tinyalsa/include \
-			system/media/audio_utils/include 
-		LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libutils
-		LOCAL_MODULE_TAGS := optional
-		
-		include $(BUILD_SHARED_LIBRARY)
-	endif
+ifeq ($(strip $(BOARD_USE_USB_AUDIO)),true)
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := audio.usb.$(TARGET_DEVICE)
+LOCAL_MODULE_RELATIVE_PATH := hw
+LOCAL_SRC_FILES := \
+    usb_audio_hw.c \
+    audio_resampler.c
+
+LOCAL_C_INCLUDES += \
+    external/tinyalsa/include \
+    system/media/audio_utils/include 
+
+LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libutils
+LOCAL_MODULE_TAGS := optional
+
+include $(BUILD_SHARED_LIBRARY)
+endif
+
 #build for hdmi audio HAL
-		include $(CLEAR_VARS)
-		
-		LOCAL_MODULE := audio.hdmi.amlogic
-		LOCAL_MODULE_RELATIVE_PATH := hw
-		LOCAL_SRC_FILES := \
-			hdmi_audio_hw.c
-		LOCAL_C_INCLUDES += \
-			external/tinyalsa/include \
-			system/media/audio_effects/include \
-			system/media/audio_utils/include 
-			
-		LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libutils
-		LOCAL_MODULE_TAGS := optional
-		
-		include $(BUILD_SHARED_LIBRARY)
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := audio.hdmi.$(TARGET_DEVICE)
+LOCAL_MODULE_RELATIVE_PATH := hw
+LOCAL_SRC_FILES := \
+    hdmi_audio_hw.c
+
+LOCAL_C_INCLUDES += \
+    external/tinyalsa/include \
+    system/media/audio_effects/include \
+    system/media/audio_utils/include 
+
+LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libutils
+LOCAL_MODULE_TAGS := optional
+
+include $(BUILD_SHARED_LIBRARY)
 
 #########################################################
 
@@ -80,15 +88,16 @@ ifdef DOLBY_UDC
 
 include $(CLEAR_VARS)
 
-	LOCAL_MODULE := audio.hdmi6.amlogic
-	LOCAL_MODULE_RELATIVE_PATH := hw
-	LOCAL_SRC_FILES := hdmi_hw.c
-	LOCAL_C_INCLUDES += \
-		external/tinyalsa/include \
-		system/media/audio_utils/include \
-		system/media/audio_effects/include
-	LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libdl libutils
-	LOCAL_MODULE_TAGS := optional
+LOCAL_MODULE := audio.hdmi6.$(TARGET_DEVICE)
+LOCAL_MODULE_RELATIVE_PATH := hw
+LOCAL_SRC_FILES := hdmi_hw.c
+LOCAL_C_INCLUDES += \
+    external/tinyalsa/include \
+    system/media/audio_utils/include \
+    system/media/audio_effects/include
+
+LOCAL_SHARED_LIBRARIES := liblog libcutils libtinyalsa libaudioutils libdl libutils
+LOCAL_MODULE_TAGS := optional
 
 endif
 
@@ -98,20 +107,20 @@ ifeq ($(USE_CUSTOM_AUDIO_POLICY),1)
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := \
-	DLGAudioPolicyManager.cpp
+    DLGAudioPolicyManager.cpp
 
 LOCAL_SHARED_LIBRARIES := \
-	libcutils \
-	liblog \
-	libutils \
-	libmedia \
-	libbinder \
-	libaudiopolicymanagerdefault \
-	libutils
+    libcutils \
+    liblog \
+    libutils \
+    libmedia \
+    libbinder \
+    libaudiopolicymanagerdefault \
+    libutils
 
 LOCAL_C_INCLUDES := \
-	external/tinyalsa/include \
-	$(TOPDIR)frameworks/av/services/audiopolicy
+    external/tinyalsa/include \
+    $(TOPDIR)frameworks/av/services/audiopolicy
 
 LOCAL_MODULE := libaudiopolicymanager
 LOCAL_MODULE_TAGS := optional
@@ -120,4 +129,5 @@ include $(BUILD_SHARED_LIBRARY)
 endif # USE_CUSTOM_AUDIO_POLICY
 
 endif # BOARD_ALSA_AUDIO
+
 include $(call all-makefiles-under,$(LOCAL_PATH))
